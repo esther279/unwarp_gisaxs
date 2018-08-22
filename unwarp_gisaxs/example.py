@@ -64,8 +64,8 @@ GISAXS_im = GISAXS_concatenate(alpha_incident,list1,shape_index)
 
 w_initial = np.log(np.load('w_initial.npz')['init'])
 '''
-from reconstruction import SAXS_recons
-im = SAXS_recons(qx_dimension=range(981),skip_qx=skip_qx,\
+from unwarp_gisaxs.reconstruction import SAXS_recons
+im = SAXS_recons(qx_dimension=range(10),skip_qx=skip_qx,\
 		alpha_incident=alpha_incident,GISAXS_im=GISAXS_im,\
 		x0=x0,fitting_range_model=fitting_range_model,qz_r=qz_r,\
 		qz=qz,qz_d=qz_d,qz_f=qz_f,reflc_params=reflc_params,\
@@ -74,9 +74,10 @@ im = SAXS_recons(qx_dimension=range(981),skip_qx=skip_qx,\
 		range_index_max=range_index_max)
 '''
 os.chdir('/Users/jiliangliu/unwarp_gisaxs/unwarp_gisaxs')
+
 from functools import partial
-from parallel_SAXS import parallel_SAXS_para_recons
-'''
+from parallel_SAXS import SAXS_para_recons,parallel_SAXS_para_recons
+
 #skip_qx = np.empty((0,0))
 para_func = partial(SAXS_para_recons,skip_qx=skip_qx,\
 		alpha_incident=alpha_incident,GISAXS_im=GISAXS_im,\
@@ -87,13 +88,14 @@ para_func = partial(SAXS_para_recons,skip_qx=skip_qx,\
 		range_index_max=range_index_max,initial = w_initial, iterations=1500)
 import multiprocessing
 
-pool = multiprocessing.Pool()
+pool = multiprocessing.Pool(multiprocessing.cpu_count())
 result = pool.map(para_func,range(shape_index[1]))
 pool.close()
 
 im = np.zeros((len(x0),shape_index[1]))
 for i in range(len(result)):
     im[:,i] = np.exp(result[i][0])
+
 '''
 im = parallel_SAXS_para_recons(qx_array=range(shape_index[1]),skip_qx=skip_qx,\
 		alpha_incident=alpha_incident,GISAXS_im=GISAXS_im,\
@@ -101,8 +103,8 @@ im = parallel_SAXS_para_recons(qx_array=range(shape_index[1]),skip_qx=skip_qx,\
 		qz=qz,qz_d=qz_d,qz_f=qz_f,reflc_params=reflc_params,\
 		trans_params=trans_params,r_f=r_f,t_f=t_f,qz_min=qz_min,\
 		qz_max=qz_max,range_index_min=range_index_min,\
-		range_index_max=range_index_max,initial = w_initial, iterations=1500)
-
+		range_index_max=range_index_max)#,initial = w_initial, iterations=1500)
+'''
 print(time.time()-t)
 
 fig,ax = plt.subplots()
