@@ -53,6 +53,9 @@ setup(
             # When adding files here, remember to update MANIFEST.in as well,
             # or else they will not be included in the distribution on PyPI!
             # 'path/to/data_file',
+            'example/reflc_n_trans_coef.npz',
+            'example/GISAXS_*',
+            'example/w_initial.npz',
             ]
         },
     install_requires=requirements,

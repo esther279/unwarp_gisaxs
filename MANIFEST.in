@@ -2,6 +2,9 @@ include AUTHORS.rst
 include CONTRIBUTING.rst
 include LICENSE
 include README.rst
+include example/reflc_n_trans_coef.npz
+include example/GISAXS_*
+include example/w_initial.npz
 
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]

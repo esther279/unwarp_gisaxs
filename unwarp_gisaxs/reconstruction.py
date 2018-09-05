@@ -13,10 +13,6 @@ from scipy.optimize import minimize
 import time
 
 t = time.time()
-# qx_dimension determined by the input image qx dimension
-#qx_dimension = 980
-# skip_qx correlate the certain qx position completely masked along qz direction which enable to reconstrcut.
-#skip_qx =  np.concatenate([np.arange(180,245),np.arange(485,496)])
 
 def SAXS_recons(qx_dimension=None,skip_qx=None,alpha_incident=None,\
 		GISAXS_im=None,x0=None,fitting_range_model=None,\
@@ -24,7 +20,70 @@ def SAXS_recons(qx_dimension=None,skip_qx=None,alpha_incident=None,\
 		reflc_params=None,trans_params=None,r_f=None,t_f=None,\
 		qz_min=None,qz_max=None,range_index_min=None,\
 		range_index_max=None,initial = np.empty((0,0)), iterations=3000):
-    fitting_portion_model = np.zeros((len(x0),len(alpha_incident)))
+	"""
+	Unwarp GISAXS pattern to SAXS pattern
+	See paper: Liu, Jiliang and Kevin Yager. " Unwarp GISAXS data", IUCrJ (2018)
+
+	This function will iteratively reconstruct SAXS for each qx
+
+	"alpha_incident_eff,qz_r,qz_d,qz_f,reflc_params,trans_params,r_f,t_f,\
+	fitting_range_model,qz_min,qz_max,range_index_min,range_index_max"
+	will be precalculated by module coefficient_calculation.
+	example.py shows how to run coefficient_calculation and this function.
+
+	Parameters
+	-----------
+	qx_dimension: 1D numpy.array
+			  this is range(len(qx)) correlates to dimension of qx for GISAXS.
+			  function parallel unwarp GISAXS for each qx independently.
+	skip_qx : 1D numpy.array
+			  this array contains index of qx, which has NO GISAXS data,
+			  usually masked by gap or beam stop.
+	alpha_incident: 1D numpy.array
+			  incident angle for corresponded GISAXS
+	GISAXS_im: 3D numpy.array
+			  stack of GISAXS pattern. each GISAXS is a 2D numpy.array, multiple
+			  GISAXS patterns with different incident angle pack together.
+	x0      : 1D numpy.array
+			  linear spaced 1D array with customer defined length, minimum is 0,
+			  maximum should be less than maximum two theta of detector space.
+	fitting_range_model: 2D numpy.array
+			  reinterpolated multiple incident angle related Q (1D array) to
+			  same size for requirements of opitimization of function.
+	qz      : 1D numpy.array
+			  q of detectorspace
+	qz_r    : 1D numpy.array
+			  refraction corrected q for reflect channel
+	qz_d    : 1D numpy.array
+			  refraction corrected q for direct channel
+	reflc_params: 1D numpy.array
+			  reflectivity coefficient
+	trans_index: 1D numpy.array
+			  transmission coefficient
+	r_f     : floats
+			  reflectivity coefficient for refraction corrected q
+	t_f     : floats
+			  transmission coefficient for refrection corrected q
+	qz_min  : floats
+			  minimum refrection corrected q
+	qz_max  : floats
+			  maximum refraction corrected q
+	range_index_min: int
+			  index of qz_min
+	range_index_max: int
+			  index of qz_max
+	initial : 2D numpy.array
+			  initial guess other than default neighbor pattern
+	iterations: int
+			  maximum function evaluation iterations
+
+	Returns
+	---------
+	im      : 2D numpy.array
+			  SAXS pattern unwarped from GISAXS data
+	"""
+
+	fitting_portion_model = np.zeros((len(x0),len(alpha_incident)))
     im_recons = np.zeros((len(x0),GISAXS_im.shape[1]))
     for j in qx_dimension:
         if j in skip_qx:

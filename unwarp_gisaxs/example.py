@@ -55,7 +55,7 @@ fitting_range_model,qz_min,qz_max,range_index_min,range_index_max = \
 
 #print np.degrees(alpha_incident),np.degrees(alpha_incident_eff)
 
-qx_dimension = range(20) #range(shape_index[1])
+qx_dimension = range(shape_index[1])
 #skip_qx = np.concatenate([np.arange(180,245),np.arange(485,496)])
 
 def GISAXS_concatenate(alpha_incident,list1,shape_index):
@@ -74,6 +74,7 @@ if w_initial.shape[0] != x0_length:
     w_initial = resize(w_initial,(int(x0_length),int(w_initial.shape[1])))
 
 '''
+# SAXS_recons function iteratively calculate SAXS recontruction for all qx
 from unwarp_gisaxs.reconstruction import SAXS_recons
 im = SAXS_recons(qx_dimension=range(10),skip_qx=skip_qx,\
 		alpha_incident=alpha_incident,GISAXS_im=GISAXS_im,\
@@ -85,7 +86,7 @@ im = SAXS_recons(qx_dimension=range(10),skip_qx=skip_qx,\
 '''
 
 '''
-# SAXS_para_recons function could
+# SAXS_para_recons function calculate SAXS recontruction for each qx
 from functools import partial
 from unwarp_gisaxs.parallel_SAXS import SAXS_para_recons
 
@@ -110,6 +111,8 @@ for i in range(len(result)):
 '''
 
 #os.chdir('/Users/jiliangliu/unwarp_gisaxs/unwarp_gisaxs')
+# parallel_SAXS_para_recons function parallely
+#calculate SAXS recontruction for all qx
 from unwarp_gisaxs.parallel_SAXS import parallel_SAXS_para_recons
 im = parallel_SAXS_para_recons(qx_array=range(shape_index[1]),#skip_qx=skip_qx,\
 		alpha_incident=alpha_incident,GISAXS_im=GISAXS_im,\
