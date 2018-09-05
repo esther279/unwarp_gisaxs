@@ -93,7 +93,7 @@ def SAXS_recons(qx_dimension=None,skip_qx=None,alpha_incident=None,\
                 I1[np.abs(I1)==inf] = np.nan
                 I1 = flipud(I1)
                 I1[np.abs(log(I1))==inf] = np.nan
-				if np.size(I1[np.isnan(I1)==0]) == 0:
+                if np.size(I1[np.isnan(I1)==0]) == 0:
                     pass
                     return np.zeros((len(x0)))
                 I1 = np.interp(np.arange(0,len(I1),1),np.arange(0,len(I1),1)[isnan(I1)==0],I1[isnan(I1)==0])
