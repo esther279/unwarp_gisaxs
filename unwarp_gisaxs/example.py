@@ -9,12 +9,14 @@ import matplotlib.pyplot as plt # for showing image
 from skimage import io
 import re
 import statsmodels.api as sm
-#from pkg_resource import resource_filename
+from pkg_resources import resource_filename
 
-os.chdir('/Users/jiliangliu/Dropbox/GISAXS_code/example/')
-q_reflc = np.load('reflc_n_trans_coef.npz')['q_reflc']
-trans_index = (np.load('reflc_n_trans_coef.npz')['T01'])**.5
-reflc = (np.load('reflc_n_trans_coef.npz')['R01'])**.5
+para_path = resource_filename('unwarp_gisaxs',
+                              'example/reflc_n_trans_coef.npz')
+#os.chdir('/Users/jiliangliu/Dropbox/GISAXS_code/example/')
+q_reflc = np.load(para_path)['q_reflc']
+trans_index = (np.load(para_path)['T01'])**.5
+reflc = (np.load(para_path)['R01'])**.5
 
 detector_distance = 4.937849
 wavelength = 0.9184
@@ -27,7 +29,7 @@ film_n = 1-(np.radians(ct_f)/2**.5)**2
 ambient_n = 1.
 alpha_incident = np.array([.12,.14,.16])
 alpha_incident = np.radians(alpha_incident)
-x0_length=300
+x0_length=200
 #alpha_incident = np.radians(.15)
 fitting_portion_model = np.zeros((x0_length,len(alpha_incident)))
 x0 = np.linspace(0,.16,x0_length)
@@ -35,7 +37,9 @@ x0 = np.linspace(0,.16,x0_length)
 import time
 t = time.time()
 
-list1 = glob.glob('GISAXS_*')
+gisaxs_path = resource_filename('unwarp_gisaxs',
+                          'example/GISAXS_*')
+list1 =	glob.glob(gisaxs_path)
 shape_index = (io.imread(list1[0])).shape
 ycenter = 686
 
@@ -52,7 +56,7 @@ fitting_range_model,qz_min,qz_max,range_index_min,range_index_max = \
 #print np.degrees(alpha_incident),np.degrees(alpha_incident_eff)
 
 qx_dimension = range(20) #range(shape_index[1])
-skip_qx = np.concatenate([np.arange(180,245),np.arange(485,496)])
+#skip_qx = np.concatenate([np.arange(180,245),np.arange(485,496)])
 
 def GISAXS_concatenate(alpha_incident,list1,shape_index):
     im = np.zeros((shape_index[0],shape_index[1],len(alpha_incident)))
@@ -62,7 +66,13 @@ def GISAXS_concatenate(alpha_incident,list1,shape_index):
 
 GISAXS_im = GISAXS_concatenate(alpha_incident,list1,shape_index)
 
-w_initial = np.log(np.load('w_initial.npz')['init'])
+w_initial_path = resource_filename('unwarp_gisaxs',
+                          'example/w_initial.npz')
+w_initial = np.log(np.load(w_initial_path)['init'])
+if w_initial.shape[0] != x0_length:
+    from skimage.transform import resize
+    w_initial = resize(w_initial,(int(x0_length),int(w_initial.shape[1])))
+
 '''
 from unwarp_gisaxs.reconstruction import SAXS_recons
 im = SAXS_recons(qx_dimension=range(10),skip_qx=skip_qx,\
@@ -73,10 +83,11 @@ im = SAXS_recons(qx_dimension=range(10),skip_qx=skip_qx,\
 		qz_max=qz_max,range_index_min=range_index_min,\
 		range_index_max=range_index_max)
 '''
-os.chdir('/Users/jiliangliu/unwarp_gisaxs/unwarp_gisaxs')
+
 '''
+# SAXS_para_recons function could
 from functools import partial
-from parallel_SAXS import SAXS_para_recons
+from unwarp_gisaxs.parallel_SAXS import SAXS_para_recons
 
 #skip_qx = np.empty((0,0))
 para_func = partial(SAXS_para_recons,skip_qx=skip_qx,\
@@ -97,14 +108,16 @@ for i in range(len(result)):
     im[:,i] = np.exp(result[i])
 
 '''
-from parallel_SAXS import parallel_SAXS_para_recons
-im = parallel_SAXS_para_recons(qx_array=range(shape_index[1]),skip_qx=skip_qx,\
+
+#os.chdir('/Users/jiliangliu/unwarp_gisaxs/unwarp_gisaxs')
+from unwarp_gisaxs.parallel_SAXS import parallel_SAXS_para_recons
+im = parallel_SAXS_para_recons(qx_array=range(shape_index[1]),#skip_qx=skip_qx,\
 		alpha_incident=alpha_incident,GISAXS_im=GISAXS_im,\
 		x0=x0,fitting_range_model=fitting_range_model,qz_r=qz_r,\
 		qz=qz,qz_d=qz_d,qz_f=qz_f,reflc_params=reflc_params,\
 		trans_params=trans_params,r_f=r_f,t_f=t_f,qz_min=qz_min,\
 		qz_max=qz_max,range_index_min=range_index_min,\
-		range_index_max=range_index_max)#,initial = w_initial, iterations=1500)
+		range_index_max=range_index_max,initial = w_initial, iterations=1000)
 
 print(time.time()-t)
 

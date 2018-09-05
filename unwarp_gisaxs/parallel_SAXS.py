@@ -37,6 +37,9 @@ def SAXS_para_recons(qx_dimension=None,skip_qx=np.empty((0,0)),\
                 I1[np.abs(I1)==np.inf] = np.nan
                 I1 = np.flipud(I1)
                 I1[np.abs(np.log(I1))==np.inf] = np.nan
+                if np.size(I1[np.isnan(I1)==0]) == 0:
+                    pass
+                    return np.zeros((len(x0)))
                 I1 = np.interp(np.arange(0,len(I1),1),np.arange(0,len(I1),1)[np.isnan(I1)==0],I1[np.isnan(I1)==0])
                 #figure(1),plot(qz,log(I1),qz_r,log(I1),qz_d,log(I1))
                 fitting_range = qz[int(range_index_min[i]):int(range_index_max[i])]
@@ -50,7 +53,7 @@ def SAXS_para_recons(qx_dimension=None,skip_qx=np.empty((0,0)),\
             if np.size(initial)!=0:
                 y0 = initial[:,j]
             else:
-                y0 = np.log(fitting_portion_model[:,1])#np.interp(np.linspace(np.min(qz[:,1]),np.max(qz[:,1]),x0_length),qz[:,1],log(model)[:,1])
+                y0 = np.log(fitting_portion_model[:,0])#np.interp(np.linspace(np.min(qz[:,1]),np.max(qz[:,1]),x0_length),qz[:,1],log(model)[:,1])
                 #sys.exit()
                 if np.size(y0[np.isnan(y0)==1])==0:
                     pass
@@ -113,7 +116,9 @@ def parallel_SAXS_para_recons(qx_array=None,skip_qx = np.empty((0,0)),\
 	for i in range(len(result)):
 		im[:,i] = np.exp(result[i])
 	return im
+
 '''
+# the code below is test on local repository for checking validation of parameter and funtions
 os.chdir('/Users/jiliangliu/Dropbox/GISAXS_code/example/')
 q_reflc = np.load('reflc_n_trans_coef.npz')['q_reflc']
 trans_index = (np.load('reflc_n_trans_coef.npz')['T01'])**.5
@@ -130,7 +135,7 @@ film_n = 1-(np.radians(ct_f)/2**.5)**2
 ambient_n = 1.
 alpha_incident = np.array([.12,.14,.16])
 alpha_incident = np.radians(alpha_incident)
-x0_length=300
+x0_length=200
 #alpha_incident = np.radians(.15)
 fitting_portion_model = np.zeros((x0_length,len(alpha_incident)))
 x0 = np.linspace(0,.16,x0_length)
@@ -166,11 +171,14 @@ def GISAXS_concatenate(alpha_incident,list1,shape_index):
 GISAXS_im = GISAXS_concatenate(alpha_incident,list1,shape_index)
 
 w_initial = np.log(np.load('w_initial.npz')['init'])
+if w_initial.shape[0] != x0_length:
+    from skimage.transform import resize
+    w_initial = resize(w_initial,(int(x0_length),int(w_initial.shape[1])))
 from functools import partial
 #from unwarp_gisaxs.parallel_SAXS import SAXS_para_recons,parallel_SAXS_para_recons
 
 #skip_qx = np.empty((0,0))
-para_func = partial(SAXS_para_recons,skip_qx=skip_qx,\
+para_func = partial(SAXS_para_recons,#skip_qx=skip_qx,\
 		alpha_incident=alpha_incident,GISAXS_im=GISAXS_im,\
 		x0=x0,fitting_range_model=fitting_range_model,qz_r=qz_r,\
 		qz=qz,qz_d=qz_d,qz_f=qz_f,reflc_params=reflc_params,\
@@ -185,7 +193,7 @@ pool.close()
 
 im = np.zeros((len(x0),shape_index[1]))
 for i in range(len(result)):
-    im[:,i] = np.exp(result[i][0])
+    im[:,i] = np.exp(result[i])
 print(time.time()-t)
 
 fig,ax = plt.subplots()

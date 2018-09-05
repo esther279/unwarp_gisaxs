@@ -35,6 +35,9 @@ def SAXS_recons(qx_dimension=None,skip_qx=None,alpha_incident=None,\
                 I1[np.abs(I1)==inf] = np.nan
                 I1 = flipud(I1)
                 I1[np.abs(log(I1))==inf] = np.nan
+				if np.size(I1[np.isnan(I1)==0]) == 0:
+                    pass
+                    return np.zeros((len(x0)))
                 I1 = np.interp(np.arange(0,len(I1),1),np.arange(0,len(I1),1)[isnan(I1)==0],I1[isnan(I1)==0])
                 #figure(1),plot(qz,log(I1),qz_r,log(I1),qz_d,log(I1))
                 fitting_range = qz[int(range_index_min[i]):int(range_index_max[i])]
@@ -43,7 +46,7 @@ def SAXS_recons(qx_dimension=None,skip_qx=None,alpha_incident=None,\
             if np.size(initial)!=0:
                 y0 = initial[:,j]
             else:
-                y0 = np.log(fitting_portion_model[:,1])#np.interp(np.linspace(np.min(qz[:,1]),np.max(qz[:,1]),x0_length),qz[:,1],log(model)[:,1])
+                y0 = np.log(fitting_portion_model[:,0])#np.interp(np.linspace(np.min(qz[:,1]),np.max(qz[:,1]),x0_length),qz[:,1],log(model)[:,1])
             if np.size(y0[isnan(y0)==1])==0:
                 pass
             else:
