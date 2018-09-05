@@ -74,9 +74,9 @@ im = SAXS_recons(qx_dimension=range(10),skip_qx=skip_qx,\
 		range_index_max=range_index_max)
 '''
 os.chdir('/Users/jiliangliu/unwarp_gisaxs/unwarp_gisaxs')
-
+'''
 from functools import partial
-from parallel_SAXS import SAXS_para_recons,parallel_SAXS_para_recons
+from parallel_SAXS import SAXS_para_recons
 
 #skip_qx = np.empty((0,0))
 para_func = partial(SAXS_para_recons,skip_qx=skip_qx,\
@@ -94,9 +94,10 @@ pool.close()
 
 im = np.zeros((len(x0),shape_index[1]))
 for i in range(len(result)):
-    im[:,i] = np.exp(result[i][0])
+    im[:,i] = np.exp(result[i])
 
 '''
+from parallel_SAXS import parallel_SAXS_para_recons
 im = parallel_SAXS_para_recons(qx_array=range(shape_index[1]),skip_qx=skip_qx,\
 		alpha_incident=alpha_incident,GISAXS_im=GISAXS_im,\
 		x0=x0,fitting_range_model=fitting_range_model,qz_r=qz_r,\
@@ -104,7 +105,7 @@ im = parallel_SAXS_para_recons(qx_array=range(shape_index[1]),skip_qx=skip_qx,\
 		trans_params=trans_params,r_f=r_f,t_f=t_f,qz_min=qz_min,\
 		qz_max=qz_max,range_index_min=range_index_min,\
 		range_index_max=range_index_max)#,initial = w_initial, iterations=1500)
-'''
+
 print(time.time()-t)
 
 fig,ax = plt.subplots()

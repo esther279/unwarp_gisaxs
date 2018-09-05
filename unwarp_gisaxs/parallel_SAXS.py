@@ -66,18 +66,18 @@ def SAXS_para_recons(qx_dimension=None,skip_qx=np.empty((0,0)),\
                         pass
                     else:
                         I[np.isnan(I)==1] = np.interp(qz[np.isnan(I)==1],qz[np.isnan(I)==0],I[np.isnan(I)==0])
-                        qz_max=np.nanmax(qz_d[:,i])
-                        qz_min=np.nanmin(qz_r[:,i])
-                        I_direct = np.interp(qz,
-					                         qz_d[np.nanargmin(np.abs(qz_d[:,i]-qz_min)):np.nanargmin(np.abs(qz_d[:,i]-qz_max)),i],
-					                         y[np.nanargmin(np.abs(qz_d[:,i]-qz_min)):np.nanargmin(np.abs(qz_d[:,i]-qz_max))])
-                        I_reflect = np.interp(qz,
-                                             qz_r[np.nanargmin(np.abs(qz_r[:,i]-qz_min)):np.nanargmin(np.abs(qz_r[:,i]-qz_max)),i],
-                                             y[np.nanargmin(np.abs(qz_r[:,i]-qz_min)):np.nanargmin(np.abs(qz_r[:,i]-qz_max))])
-                        #print I_reflect.shape,qz.shape,qz_r.shape,y.shape,
-                        #return I_reflect,I_direct,qz_max,qz_min
-                        fitting_portion =I#I[np.nanargmin(np.abs(qz-qz_min)):np.nanargmin(np.abs(qz-qz_max))]
-                        norm_judge[i] = norm(fitting_portion-np.log(trans_params[:,i]**2*t_f[i]**2*np.exp(I_direct)+
+                    qz_max=np.nanmax(qz_d[:,i])
+                    qz_min=np.nanmin(qz_r[:,i])
+                    I_direct = np.interp(qz,
+					                     qz_d[np.nanargmin(np.abs(qz_d[:,i]-qz_min)):np.nanargmin(np.abs(qz_d[:,i]-qz_max)),i],
+					                     y[np.nanargmin(np.abs(qz_d[:,i]-qz_min)):np.nanargmin(np.abs(qz_d[:,i]-qz_max))])
+                    I_reflect = np.interp(qz,
+                                          qz_r[np.nanargmin(np.abs(qz_r[:,i]-qz_min)):np.nanargmin(np.abs(qz_r[:,i]-qz_max)),i],
+                                          y[np.nanargmin(np.abs(qz_r[:,i]-qz_min)):np.nanargmin(np.abs(qz_r[:,i]-qz_max))])
+                    #print I_reflect.shape,qz.shape,qz_r.shape,y.shape,
+                    #return I_reflect,I_direct,qz_max,qz_min
+                    fitting_portion =I#I[np.nanargmin(np.abs(qz-qz_min)):np.nanargmin(np.abs(qz-qz_max))]
+                    norm_judge[i] = norm(fitting_portion-np.log(trans_params[:,i]**2*t_f[i]**2*np.exp(I_direct)+
                                            t_f[i]**2*reflc_params[:,i]**2*np.exp(I_reflect)+trans_params[:,i]**2*r_f[i]**2*\
                                            np.exp(I_reflect)+r_f[i]**2*reflc_params[:,i]**2*np.exp(I_direct)))
                 return np.sum(norm_judge)
@@ -111,9 +111,9 @@ def parallel_SAXS_para_recons(qx_array=None,skip_qx = np.empty((0,0)),\
 	pool.close()
 	im = np.zeros((len(x0),len(qx_array)))
 	for i in range(len(result)):
-		im[:,i] = np.exp(result[i][0])
+		im[:,i] = np.exp(result[i])
 	return im
-
+'''
 os.chdir('/Users/jiliangliu/Dropbox/GISAXS_code/example/')
 q_reflc = np.load('reflc_n_trans_coef.npz')['q_reflc']
 trans_index = (np.load('reflc_n_trans_coef.npz')['T01'])**.5
@@ -192,3 +192,4 @@ fig,ax = plt.subplots()
 ax.imshow(np.log(im),vmin=0)
 plt.show()
 #print time.time()-t
+'''
