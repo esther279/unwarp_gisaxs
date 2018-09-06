@@ -12,9 +12,18 @@ install:
   # Install extra requirements for running tests and building docs.
   - pip install -r requirements-dev.txt
 
+env:
+  global:
+        # Doctr deploy key for ligerliu/unwarp_gisaxs
+        - secure:
+          "gpsnW9PmYu0GAp34pJM3/hHF278ScTnYprOchOUVmcZ/nVCU4kmCvMJoOrZPfdjpGJAs2tiH1NMI3n6nzDI0rMQY/NblP5/RM7JB/Qoir3gcTzmoR4jLfAyGhXFUsmy9qrQeQG7Lv51FEIUVwqhH3Z7pfnXxiuW5eIMwuIWyYRgE2M7a/1D9aU63TgiiALxKRhRfbSCCHdTFaQmwSsFysIYM6UgKaZC5q31GlVzSjCAYodtByu4aEk+SK5CWuBklfa8Aw0OmyBQh41ynGHJTE3goUwzU/ZA9SUPl+OAOhyHo9FpmKF312cYPRCGbjoQVdhf+NzR+mvwpC/53zxq2VYb8ov3cYWzws3sh77G/18xCF412ErFv9PkWiF+RU+2Nycm9odswZ0eQVgeLB2R2zUo0UWB22BCd0OXGV3FXbh4AolD+J/xfBWEbUIrsKAUP0XGqiESybvupKdFsIMxQ+tEsEL7KCM6qUC5aVStiOjA+63ZOTP8gixyDGYALaIEjFndJWPSZAa7N5y1ybQeV9jPXBZ79TtA7HDWLDDBug2nMERxHz59WP81rJgtu6+U3xkv7eBJIvCDcqo7T3VLlckjYqtbplxn+58+Up8bQ0tnb0pdqoEgXla6KJEUmWe5QznjdG8Qktvk8S7eQFAs834ab0ggJZuzsO2MjR5aSRpk="
+
 script:
   - coverage run -m pytest  # Run the tests and check for test coverage.
   - coverage report -m  # Generate test coverage report.
   - codecov  # Upload the report to codecov.
-  - flake8 --max-line-length=115  # Enforce code style (but relax line length limit a bit).
+  #- flake8 --max-line-length=315  # Enforce code style (but relax line length limit a bit).
+  - set -e
   - make -C docs html  # Build the documentation.
+  - pip install doctr
+  - doctr deploy --built-docs docs/build/html .
