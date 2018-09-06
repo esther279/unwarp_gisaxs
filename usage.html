@@ -1,0 +1,636 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Usage &mdash; unwarp_gisaxs 0.post19+g975bc45 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" type="text/css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Release History" href="release-history.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> unwarp_gisaxs
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.post19+g975bc45
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plots">Plots</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="release-history.html">Release History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">unwarp_gisaxs</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Usage</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<p>Start by importing unwarp_gisaxs.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unwarp_gisaxs</span>
+</pre></div>
+</div>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="unwarp_gisaxs.reconstruction.SAXS_recons">
+<code class="descclassname">unwarp_gisaxs.reconstruction.</code><code class="descname">SAXS_recons</code><span class="sig-paren">(</span><em>qx_dimension=None</em>, <em>skip_qx=None</em>, <em>alpha_incident=None</em>, <em>GISAXS_im=None</em>, <em>x0=None</em>, <em>fitting_range_model=None</em>, <em>qz=None</em>, <em>qz_r=None</em>, <em>qz_d=None</em>, <em>qz_f=None</em>, <em>reflc_params=None</em>, <em>trans_params=None</em>, <em>r_f=None</em>, <em>t_f=None</em>, <em>qz_min=None</em>, <em>qz_max=None</em>, <em>range_index_min=None</em>, <em>range_index_max=None</em>, <em>initial=array([]</em>, <em>shape=(0</em>, <em>0)</em>, <em>dtype=float64)</em>, <em>iterations=3000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/unwarp_gisaxs/reconstruction.html#SAXS_recons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#unwarp_gisaxs.reconstruction.SAXS_recons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unwarp GISAXS pattern to SAXS pattern
+See paper: Liu, Jiliang and Kevin Yager. ” Unwarp GISAXS data”, IUCrJ (2018)</p>
+<p>This function will iteratively reconstruct SAXS for each qx</p>
+<p>“alpha_incident_eff,qz_r,qz_d,qz_f,reflc_params,trans_params,r_f,t_f,    fitting_range_model,qz_min,qz_max,range_index_min,range_index_max”
+will be precalculated by module coefficient_calculation.
+example.py shows how to run coefficient_calculation and this function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>qx_dimension: 1D numpy.array</strong></dt>
+<dd><p class="first last">this is range(len(qx)) correlates to dimension of qx for GISAXS.
+function parallel unwarp GISAXS for each qx independently.</p>
+</dd>
+<dt><strong>skip_qx</strong> <span class="classifier-delimiter">:</span> <span class="classifier">1D numpy.array</span></dt>
+<dd><p class="first last">this array contains index of qx, which has NO GISAXS data,
+usually masked by gap or beam stop.</p>
+</dd>
+<dt><strong>alpha_incident: 1D numpy.array</strong></dt>
+<dd><p class="first last">incident angle for corresponded GISAXS</p>
+</dd>
+<dt><strong>GISAXS_im: 3D numpy.array</strong></dt>
+<dd><p class="first last">stack of GISAXS pattern. each GISAXS is a 2D numpy.array, multiple
+GISAXS patterns with different incident angle pack together.</p>
+</dd>
+<dt><strong>x0</strong> <span class="classifier-delimiter">:</span> <span class="classifier">1D numpy.array</span></dt>
+<dd><p class="first last">linear spaced 1D array with customer defined length, minimum is 0,
+maximum should be less than maximum two theta of detector space.</p>
+</dd>
+<dt><strong>fitting_range_model: 2D numpy.array</strong></dt>
+<dd><p class="first last">reinterpolated multiple incident angle related Q (1D array) to
+same size for requirements of opitimization of function.</p>
+</dd>
+<dt><strong>qz</strong> <span class="classifier-delimiter">:</span> <span class="classifier">1D numpy.array</span></dt>
+<dd><p class="first last">q of detectorspace</p>
+</dd>
+<dt><strong>qz_r</strong> <span class="classifier-delimiter">:</span> <span class="classifier">1D numpy.array</span></dt>
+<dd><p class="first last">refraction corrected q for reflect channel</p>
+</dd>
+<dt><strong>qz_d</strong> <span class="classifier-delimiter">:</span> <span class="classifier">1D numpy.array</span></dt>
+<dd><p class="first last">refraction corrected q for direct channel</p>
+</dd>
+<dt><strong>reflc_params: 1D numpy.array</strong></dt>
+<dd><p class="first last">reflectivity coefficient</p>
+</dd>
+<dt><strong>trans_index: 1D numpy.array</strong></dt>
+<dd><p class="first last">transmission coefficient</p>
+</dd>
+<dt><strong>r_f</strong> <span class="classifier-delimiter">:</span> <span class="classifier">floats</span></dt>
+<dd><p class="first last">reflectivity coefficient for refraction corrected q</p>
+</dd>
+<dt><strong>t_f</strong> <span class="classifier-delimiter">:</span> <span class="classifier">floats</span></dt>
+<dd><p class="first last">transmission coefficient for refrection corrected q</p>
+</dd>
+<dt><strong>qz_min</strong> <span class="classifier-delimiter">:</span> <span class="classifier">floats</span></dt>
+<dd><p class="first last">minimum refrection corrected q</p>
+</dd>
+<dt><strong>qz_max</strong> <span class="classifier-delimiter">:</span> <span class="classifier">floats</span></dt>
+<dd><p class="first last">maximum refraction corrected q</p>
+</dd>
+<dt><strong>range_index_min: int</strong></dt>
+<dd><p class="first last">index of qz_min</p>
+</dd>
+<dt><strong>range_index_max: int</strong></dt>
+<dd><p class="first last">index of qz_max</p>
+</dd>
+<dt><strong>initial</strong> <span class="classifier-delimiter">:</span> <span class="classifier">2D numpy.array</span></dt>
+<dd><p class="first last">initial guess other than default neighbor pattern</p>
+</dd>
+<dt><strong>iterations: int</strong></dt>
+<dd><p class="first last">maximum function evaluation iterations</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>im</strong> <span class="classifier-delimiter">:</span> <span class="classifier">2D numpy.array</span></dt>
+<dd><p class="first last">SAXS pattern unwarped from GISAXS data</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="unwarp_gisaxs.parallel_SAXS.SAXS_para_recons">
+<code class="descclassname">unwarp_gisaxs.parallel_SAXS.</code><code class="descname">SAXS_para_recons</code><span class="sig-paren">(</span><em>qx_dimension=None</em>, <em>skip_qx=array([]</em>, <em>shape=(0</em>, <em>0)</em>, <em>dtype=float64)</em>, <em>alpha_incident=None</em>, <em>GISAXS_im=None</em>, <em>x0=None</em>, <em>fitting_range_model=None</em>, <em>qz=None</em>, <em>qz_r=None</em>, <em>qz_d=None</em>, <em>qz_f=None</em>, <em>reflc_params=None</em>, <em>trans_params=None</em>, <em>r_f=None</em>, <em>t_f=None</em>, <em>qz_min=None</em>, <em>qz_max=None</em>, <em>range_index_min=None</em>, <em>range_index_max=None</em>, <em>initial=array([]</em>, <em>shape=(0</em>, <em>0)</em>, <em>dtype=float64)</em>, <em>iterations=3000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/unwarp_gisaxs/parallel_SAXS.html#SAXS_para_recons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#unwarp_gisaxs.parallel_SAXS.SAXS_para_recons" title="Permalink to this definition">¶</a></dt>
+<dd><p>SAXS recontruction at certain qx position</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>qx_dimension: int</strong></dt>
+<dd><p class="first last">index of qx for SAXS reconstruction</p>
+</dd>
+<dt><strong>skip_qx</strong> <span class="classifier-delimiter">:</span> <span class="classifier">1D numpy.array</span></dt>
+<dd><p class="first last">this array contains index of qx, which has NO GISAXS data,
+usually masked by gap or beam stop.</p>
+</dd>
+<dt><strong>alpha_incident: 1D numpy.array</strong></dt>
+<dd><p class="first last">incident angle for corresponded GISAXS</p>
+</dd>
+<dt><strong>GISAXS_im: 3D numpy.array</strong></dt>
+<dd><p class="first last">stack of GISAXS pattern. each GISAXS is a 2D numpy.array, multiple
+GISAXS patterns with different incident angle pack together.</p>
+</dd>
+<dt><strong>x0</strong> <span class="classifier-delimiter">:</span> <span class="classifier">1D numpy.array</span></dt>
+<dd><p class="first last">linear spaced 1D array with customer defined length, minimum is 0,
+maximum should be less than maximum two theta of detector space.</p>
+</dd>
+<dt><strong>fitting_range_model: 2D numpy.array</strong></dt>
+<dd><p class="first last">reinterpolated multiple incident angle related Q (1D array) to
+same size for requirements of opitimization of function.</p>
+</dd>
+<dt><strong>qz</strong> <span class="classifier-delimiter">:</span> <span class="classifier">1D numpy.array</span></dt>
+<dd><p class="first last">q of detectorspace</p>
+</dd>
+<dt><strong>qz_r</strong> <span class="classifier-delimiter">:</span> <span class="classifier">1D numpy.array</span></dt>
+<dd><p class="first last">refraction corrected q for reflect channel</p>
+</dd>
+<dt><strong>qz_d</strong> <span class="classifier-delimiter">:</span> <span class="classifier">1D numpy.array</span></dt>
+<dd><p class="first last">refraction corrected q for direct channel</p>
+</dd>
+<dt><strong>reflc_params: 1D numpy.array</strong></dt>
+<dd><p class="first last">reflectivity coefficient</p>
+</dd>
+<dt><strong>trans_index: 1D numpy.array</strong></dt>
+<dd><p class="first last">transmission coefficient</p>
+</dd>
+<dt><strong>r_f</strong> <span class="classifier-delimiter">:</span> <span class="classifier">floats</span></dt>
+<dd><p class="first last">reflectivity coefficient for refraction corrected q</p>
+</dd>
+<dt><strong>t_f</strong> <span class="classifier-delimiter">:</span> <span class="classifier">floats</span></dt>
+<dd><p class="first last">transmission coefficient for refrection corrected q</p>
+</dd>
+<dt><strong>qz_min</strong> <span class="classifier-delimiter">:</span> <span class="classifier">floats</span></dt>
+<dd><p class="first last">minimum refrection corrected q</p>
+</dd>
+<dt><strong>qz_max</strong> <span class="classifier-delimiter">:</span> <span class="classifier">floats</span></dt>
+<dd><p class="first last">maximum refraction corrected q</p>
+</dd>
+<dt><strong>range_index_min: int</strong></dt>
+<dd><p class="first last">index of qz_min</p>
+</dd>
+<dt><strong>range_index_max: int</strong></dt>
+<dd><p class="first last">index of qz_max</p>
+</dd>
+<dt><strong>initial</strong> <span class="classifier-delimiter">:</span> <span class="classifier">2D numpy.array</span></dt>
+<dd><p class="first last">initial guess other than default neighbor pattern</p>
+</dd>
+<dt><strong>iterations: int</strong></dt>
+<dd><p class="first last">maximum function evaluation iterations</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>ret.x</strong> <span class="classifier-delimiter">:</span> <span class="classifier">1D numpy.array</span></dt>
+<dd><p class="first last">SAXS pattern unwarped from GISAXS data at certain qx</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="unwarp_gisaxs.parallel_SAXS.parallel_SAXS_para_recons">
+<code class="descclassname">unwarp_gisaxs.parallel_SAXS.</code><code class="descname">parallel_SAXS_para_recons</code><span class="sig-paren">(</span><em>qx_array=None</em>, <em>skip_qx=array([]</em>, <em>shape=(0</em>, <em>0)</em>, <em>dtype=float64)</em>, <em>alpha_incident=None</em>, <em>GISAXS_im=None</em>, <em>x0=None</em>, <em>fitting_range_model=None</em>, <em>qz=None</em>, <em>qz_r=None</em>, <em>qz_d=None</em>, <em>qz_f=None</em>, <em>reflc_params=None</em>, <em>trans_params=None</em>, <em>r_f=None</em>, <em>t_f=None</em>, <em>qz_min=None</em>, <em>qz_max=None</em>, <em>range_index_min=None</em>, <em>range_index_max=None</em>, <em>initial=array([]</em>, <em>shape=(0</em>, <em>0)</em>, <em>dtype=float64)</em>, <em>iterations=3000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/unwarp_gisaxs/parallel_SAXS.html#parallel_SAXS_para_recons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#unwarp_gisaxs.parallel_SAXS.parallel_SAXS_para_recons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unwarp GISAXS pattern to SAXS pattern
+See paper: Liu, Jiliang and Kevin Yager. ” Unwarp GISAXS data”, IUCrJ (2018)</p>
+<p>This function will automatically identify available CPU core and parallel
+reconstructin process</p>
+<p>“alpha_incident_eff,qz_r,qz_d,qz_f,reflc_params,trans_params,r_f,t_f,    fitting_range_model,qz_min,qz_max,range_index_min,range_index_max”
+will be precalculated by module coefficient_calculation.
+example.py shows how to run coefficient_calculation and this function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>qx_array: 1D numpy.array</strong></dt>
+<dd><p class="first last">this is range(len(qx)) correlates to dimension of qx for GISAXS.
+function parallel unwarp GISAXS for each qx independently.</p>
+</dd>
+<dt><strong>skip_qx</strong> <span class="classifier-delimiter">:</span> <span class="classifier">1D numpy.array</span></dt>
+<dd><p class="first last">this array contains index of qx, which has NO GISAXS data,
+usually masked by gap or beam stop.</p>
+</dd>
+<dt><strong>alpha_incident: 1D numpy.array</strong></dt>
+<dd><p class="first last">incident angle for corresponded GISAXS</p>
+</dd>
+<dt><strong>GISAXS_im: 3D numpy.array</strong></dt>
+<dd><p class="first last">stack of GISAXS pattern. each GISAXS is a 2D numpy.array, multiple
+GISAXS patterns with different incident angle pack together.</p>
+</dd>
+<dt><strong>x0</strong> <span class="classifier-delimiter">:</span> <span class="classifier">1D numpy.array</span></dt>
+<dd><p class="first last">linear spaced 1D array with customer defined length, minimum is 0,
+maximum should be less than maximum two theta of detector space.</p>
+</dd>
+<dt><strong>fitting_range_model: 2D numpy.array</strong></dt>
+<dd><p class="first last">reinterpolated multiple incident angle related Q (1D array) to
+same size for requirements of opitimization of function.</p>
+</dd>
+<dt><strong>qz</strong> <span class="classifier-delimiter">:</span> <span class="classifier">1D numpy.array</span></dt>
+<dd><p class="first last">q of detectorspace</p>
+</dd>
+<dt><strong>qz_r</strong> <span class="classifier-delimiter">:</span> <span class="classifier">1D numpy.array</span></dt>
+<dd><p class="first last">refraction corrected q for reflect channel</p>
+</dd>
+<dt><strong>qz_d</strong> <span class="classifier-delimiter">:</span> <span class="classifier">1D numpy.array</span></dt>
+<dd><p class="first last">refraction corrected q for direct channel</p>
+</dd>
+<dt><strong>reflc_params: 1D numpy.array</strong></dt>
+<dd><p class="first last">reflectivity coefficient</p>
+</dd>
+<dt><strong>trans_index: 1D numpy.array</strong></dt>
+<dd><p class="first last">transmission coefficient</p>
+</dd>
+<dt><strong>r_f</strong> <span class="classifier-delimiter">:</span> <span class="classifier">floats</span></dt>
+<dd><p class="first last">reflectivity coefficient for refraction corrected q</p>
+</dd>
+<dt><strong>t_f</strong> <span class="classifier-delimiter">:</span> <span class="classifier">floats</span></dt>
+<dd><p class="first last">transmission coefficient for refrection corrected q</p>
+</dd>
+<dt><strong>qz_min</strong> <span class="classifier-delimiter">:</span> <span class="classifier">floats</span></dt>
+<dd><p class="first last">minimum refrection corrected q</p>
+</dd>
+<dt><strong>qz_max</strong> <span class="classifier-delimiter">:</span> <span class="classifier">floats</span></dt>
+<dd><p class="first last">maximum refraction corrected q</p>
+</dd>
+<dt><strong>range_index_min: int</strong></dt>
+<dd><p class="first last">index of qz_min</p>
+</dd>
+<dt><strong>range_index_max: int</strong></dt>
+<dd><p class="first last">index of qz_max</p>
+</dd>
+<dt><strong>initial</strong> <span class="classifier-delimiter">:</span> <span class="classifier">2D numpy.array</span></dt>
+<dd><p class="first last">initial guess other than default neighbor pattern</p>
+</dd>
+<dt><strong>iterations: int</strong></dt>
+<dd><p class="first last">maximum function evaluation iterations</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>im</strong> <span class="classifier-delimiter">:</span> <span class="classifier">2D numpy.array</span></dt>
+<dd><p class="first last">SAXS pattern unwarped from GISAXS data</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="kn">import</span> <span class="nn">glob</span>
+
+<span class="gp">In [2]: </span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="gp">In [3]: </span><span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="gp">In [4]: </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="gp">In [5]: </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span> <span class="c1"># for showing image</span>
+
+<span class="gp">In [6]: </span><span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">io</span>
+
+<span class="gp">In [7]: </span><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="gp">In [8]: </span><span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="kn">as</span> <span class="nn">sm</span>
+
+<span class="gp">In [9]: </span><span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_filename</span>
+
+<span class="gp">In [10]: </span><span class="n">para_path</span> <span class="o">=</span> <span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;unwarp_gisaxs&#39;</span><span class="p">,</span>
+
+<span class="go">#os.chdir(&#39;/Users/jiliangliu/Dropbox/GISAXS_code/example/&#39;)</span>
+<span class="gp">In [10]: </span><span class="n">q_reflc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">para_path</span><span class="p">)[</span><span class="s1">&#39;q_reflc&#39;</span><span class="p">]</span>
+
+<span class="gp">In [10]: </span><span class="n">trans_index</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">para_path</span><span class="p">)[</span><span class="s1">&#39;T01&#39;</span><span class="p">])</span><span class="o">**.</span><span class="mi">5</span>
+
+<span class="gp">In [10]: </span><span class="n">reflc</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">para_path</span><span class="p">)[</span><span class="s1">&#39;R01&#39;</span><span class="p">])</span><span class="o">**.</span><span class="mi">5</span>
+
+<span class="gp">In [10]: </span><span class="n">detector_distance</span> <span class="o">=</span> <span class="mf">4.937849</span>
+
+<span class="gp">In [10]: </span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">0.9184</span>
+
+<span class="gp">In [10]: </span><span class="n">ratioDw</span> <span class="o">=</span> <span class="mf">29.27</span>
+
+<span class="gp">In [10]: </span><span class="n">ct_f</span> <span class="o">=</span>  <span class="mf">0.0928039405254</span><span class="o">*</span><span class="mf">0.9</span>
+
+<span class="gp">In [10]: </span><span class="n">ct_si</span> <span class="o">=</span> <span class="mf">0.135</span>
+
+<span class="gp">In [10]: </span><span class="n">k0</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">wavelength</span>
+
+<span class="gp">In [10]: </span><span class="n">film_n</span> <span class="o">=</span> <span class="mi">1</span><span class="o">-</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">ct_f</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="o">**.</span><span class="mi">5</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+
+<span class="gp">In [10]: </span><span class="n">ambient_n</span> <span class="o">=</span> <span class="mf">1.</span>
+
+<span class="gp">In [10]: </span><span class="n">alpha_incident</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">.</span><span class="mi">12</span><span class="p">,</span><span class="o">.</span><span class="mi">14</span><span class="p">,</span><span class="o">.</span><span class="mi">16</span><span class="p">])</span>
+
+<span class="gp">In [10]: </span><span class="n">alpha_incident</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">alpha_incident</span><span class="p">)</span>
+
+<span class="gp">In [10]: </span><span class="n">x0_length</span><span class="o">=</span><span class="mi">200</span>
+
+<span class="go">#alpha_incident = np.radians(.15)</span>
+<span class="gp">In [10]: </span><span class="n">fitting_portion_model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">x0_length</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">alpha_incident</span><span class="p">)))</span>
+
+<span class="gp">In [10]: </span><span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">.</span><span class="mi">16</span><span class="p">,</span><span class="n">x0_length</span><span class="p">)</span>
+
+<span class="gp">In [10]: </span><span class="kn">import</span> <span class="nn">time</span>
+
+<span class="gp">In [10]: </span><span class="n">t</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+<span class="gp">In [10]: </span><span class="n">gisaxs_path</span> <span class="o">=</span> <span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;unwarp_gisaxs&#39;</span><span class="p">,</span>
+<span class="gp">   ....: </span>                          <span class="s1">&#39;example/GISAXS_*&#39;</span><span class="p">)</span>
+<span class="gp">   ....: </span>
+
+<span class="gp">In [10]: </span><span class="n">list1</span> <span class="o">=</span>      <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">gisaxs_path</span><span class="p">)</span>
+
+<span class="gp">In [10]: </span><span class="n">shape_index</span> <span class="o">=</span> <span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">list1</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span><span class="o">.</span><span class="n">shape</span>
+
+<span class="gp">In [10]: </span><span class="n">ycenter</span> <span class="o">=</span> <span class="mi">686</span>
+
+<span class="gp">In [10]: </span><span class="n">qz</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">((</span><span class="n">ycenter</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1043</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="mi">172</span><span class="o">*</span><span class="mf">1e-6</span><span class="o">/</span><span class="n">detector_distance</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">wavelength</span>
+
+<span class="gp">In [10]: </span><span class="n">qz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">qz</span><span class="p">)</span>
+
+<span class="gp">In [10]: </span><span class="kn">from</span> <span class="nn">unwarp_gisaxs.coefficient_calculation</span> <span class="kn">import</span> <span class="n">coefficient_calculation</span>
+
+<span class="gp">In [10]: </span><span class="n">alpha_incident_eff</span><span class="p">,</span><span class="n">qz_r</span><span class="p">,</span><span class="n">qz_d</span><span class="p">,</span><span class="n">qz_f</span><span class="p">,</span><span class="n">reflc_params</span><span class="p">,</span><span class="n">trans_params</span><span class="p">,</span><span class="n">r_f</span><span class="p">,</span><span class="n">t_f</span><span class="p">,</span>\
+
+<span class="gp">In [10]: </span><span class="n">fitting_range_model</span><span class="p">,</span><span class="n">qz_min</span><span class="p">,</span><span class="n">qz_max</span><span class="p">,</span><span class="n">range_index_min</span><span class="p">,</span><span class="n">range_index_max</span> <span class="o">=</span> \
+<span class="gp">   ....: </span>             <span class="n">coefficient_calculation</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span><span class="n">alpha_incident</span><span class="p">,</span><span class="n">ambient_n</span><span class="p">,</span>\
+<span class="gp">   ....: </span>                                     <span class="n">film_n</span><span class="p">,</span><span class="n">qz</span><span class="p">,</span><span class="n">q_reflc</span><span class="p">,</span><span class="n">reflc</span><span class="p">,</span>\
+<span class="gp">   ....: </span>                                     <span class="n">trans_index</span><span class="p">,</span><span class="n">k0</span><span class="p">)</span>
+<span class="gp">   ....: </span>
+
+<span class="go">#print np.degrees(alpha_incident),np.degrees(alpha_incident_eff)</span>
+<span class="gp">In [10]: </span><span class="n">qx_dimension</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">shape_index</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="go">#skip_qx = np.concatenate([np.arange(180,245),np.arange(485,496)])</span>
+<span class="gp">In [10]: </span><span class="k">def</span> <span class="nf">GISAXS_concatenate</span><span class="p">(</span><span class="n">alpha_incident</span><span class="p">,</span><span class="n">list1</span><span class="p">,</span><span class="n">shape_index</span><span class="p">):</span>
+<span class="gp">   ....: </span>    <span class="n">im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">shape_index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">shape_index</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="nb">len</span><span class="p">(</span><span class="n">alpha_incident</span><span class="p">)))</span>
+<span class="gp">   ....: </span>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">alpha_incident</span><span class="p">)):</span>
+<span class="gp">   ....: </span>        <span class="n">im</span><span class="p">[:,:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">list1</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="gp">   ....: </span>    <span class="k">return</span> <span class="n">im</span>
+<span class="gp">   ....: </span>
+
+<span class="gp">In [10]: </span><span class="n">GISAXS_im</span> <span class="o">=</span> <span class="n">GISAXS_concatenate</span><span class="p">(</span><span class="n">alpha_incident</span><span class="p">,</span><span class="n">list1</span><span class="p">,</span><span class="n">shape_index</span><span class="p">)</span>
+
+<span class="gp">In [10]: </span><span class="n">w_initial_path</span> <span class="o">=</span> <span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;unwarp_gisaxs&#39;</span><span class="p">,</span>
+<span class="gp">   ....: </span>                          <span class="s1">&#39;example/w_initial.npz&#39;</span><span class="p">)</span>
+<span class="gp">   ....: </span>
+
+<span class="gp">In [10]: </span><span class="n">w_initial</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">w_initial_path</span><span class="p">)[</span><span class="s1">&#39;init&#39;</span><span class="p">])</span>
+
+<span class="gp">In [10]: </span><span class="k">if</span> <span class="n">w_initial</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">x0_length</span><span class="p">:</span>
+<span class="gp">   ....: </span>    <span class="kn">from</span> <span class="nn">skimage.transform</span> <span class="kn">import</span> <span class="n">resize</span>
+<span class="gp">   ....: </span>    <span class="n">w_initial</span> <span class="o">=</span> <span class="n">resize</span><span class="p">(</span><span class="n">w_initial</span><span class="p">,(</span><span class="nb">int</span><span class="p">(</span><span class="n">x0_length</span><span class="p">),</span><span class="nb">int</span><span class="p">(</span><span class="n">w_initial</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span>
+<span class="gp">   ....: </span>
+
+<span class="gp">In [10]: </span><span class="kn">from</span> <span class="nn">unwarp_gisaxs.parallel_SAXS</span> <span class="kn">import</span> <span class="n">parallel_SAXS_para_recons</span>
+
+<span class="gp">In [10]: </span><span class="n">im</span> <span class="o">=</span> <span class="n">parallel_SAXS_para_recons</span><span class="p">(</span><span class="n">qx_array</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">shape_index</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span><span class="c1">#skip_qx=skip_qx,\</span>
+<span class="gp">   ....: </span>             <span class="n">alpha_incident</span><span class="o">=</span><span class="n">alpha_incident</span><span class="p">,</span><span class="n">GISAXS_im</span><span class="o">=</span><span class="n">GISAXS_im</span><span class="p">,</span>\
+<span class="gp">   ....: </span>             <span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span><span class="n">fitting_range_model</span><span class="o">=</span><span class="n">fitting_range_model</span><span class="p">,</span><span class="n">qz_r</span><span class="o">=</span><span class="n">qz_r</span><span class="p">,</span>\
+<span class="gp">   ....: </span>             <span class="n">qz</span><span class="o">=</span><span class="n">qz</span><span class="p">,</span><span class="n">qz_d</span><span class="o">=</span><span class="n">qz_d</span><span class="p">,</span><span class="n">qz_f</span><span class="o">=</span><span class="n">qz_f</span><span class="p">,</span><span class="n">reflc_params</span><span class="o">=</span><span class="n">reflc_params</span><span class="p">,</span>\
+<span class="gp">   ....: </span>             <span class="n">trans_params</span><span class="o">=</span><span class="n">trans_params</span><span class="p">,</span><span class="n">r_f</span><span class="o">=</span><span class="n">r_f</span><span class="p">,</span><span class="n">t_f</span><span class="o">=</span><span class="n">t_f</span><span class="p">,</span><span class="n">qz_min</span><span class="o">=</span><span class="n">qz_min</span><span class="p">,</span>\
+<span class="gp">   ....: </span>             <span class="n">qz_max</span><span class="o">=</span><span class="n">qz_max</span><span class="p">,</span><span class="n">range_index_min</span><span class="o">=</span><span class="n">range_index_min</span><span class="p">,</span>\
+<span class="gp">   ....: </span>             <span class="n">range_index_max</span><span class="o">=</span><span class="n">range_index_max</span><span class="p">,</span><span class="n">initial</span> <span class="o">=</span> <span class="n">w_initial</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">   ....: </span>
+
+<span class="gp">In [10]: </span><span class="k">print</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="plots">
+<h2>Plots<a class="headerlink" href="#plots" title="Permalink to this headline">¶</a></h2>
+<div class="figure">
+<img alt="_images/usage-1.png" src="_images/usage-1.png" />
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="release-history.html" class="btn btn-neutral float-right" title="Release History" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, jiliang liu.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.post19+g975bc45',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/copybutton.js"></script>
+      <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+      <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

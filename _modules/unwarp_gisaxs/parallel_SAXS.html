@@ -1,0 +1,451 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>unwarp_gisaxs.parallel_SAXS &mdash; unwarp_gisaxs 0.post19+g975bc45 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" type="text/css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> unwarp_gisaxs
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.post19+g975bc45
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release-history.html">Release History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">unwarp_gisaxs</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>unwarp_gisaxs.parallel_SAXS</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for unwarp_gisaxs.parallel_SAXS</h1><div class="highlight"><pre>
+<span></span><span class="c1"># construct pattern of direct beam and reflect from a model</span>
+<span class="c1"># build a one-d model</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># for showing image</span>
+<span class="c1">#from pylab import * # for multiple figure window</span>
+<span class="kn">from</span> <span class="nn">skimage</span> <span class="k">import</span> <span class="n">io</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="k">import</span> <span class="n">minimize</span>
+<span class="kn">from</span> <span class="nn">numpy.linalg</span> <span class="k">import</span> <span class="n">norm</span>
+
+<span class="c1">#import time</span>
+
+<span class="c1">#t = time.time()</span>
+<span class="c1"># qx_dimension determined by the input image qx dimension</span>
+<span class="c1">#qx_dimension = 980</span>
+<span class="c1"># skip_qx correlate the certain qx position completely masked along qz direction which enable to reconstrcut.</span>
+<span class="c1">#skip_qx =  np.concatenate([np.arange(180,245),np.arange(485,496)])</span>
+
+<div class="viewcode-block" id="SAXS_para_recons"><a class="viewcode-back" href="../../usage.html#unwarp_gisaxs.parallel_SAXS.SAXS_para_recons">[docs]</a><span class="k">def</span> <span class="nf">SAXS_para_recons</span><span class="p">(</span><span class="n">qx_dimension</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">skip_qx</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)),</span>\
+        <span class="n">alpha_incident</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
+		<span class="n">GISAXS_im</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">x0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">fitting_range_model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
+		<span class="n">qz</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">qz_r</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">qz_d</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">qz_f</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
+		<span class="n">reflc_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">trans_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">r_f</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">t_f</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
+		<span class="n">qz_min</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">qz_max</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">range_index_min</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
+		<span class="n">range_index_max</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">initial</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)),</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">3000</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        SAXS recontruction at certain qx position</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        qx_dimension: int</span>
+<span class="sd">                  index of qx for SAXS reconstruction</span>
+<span class="sd">        skip_qx : 1D numpy.array</span>
+<span class="sd">                  this array contains index of qx, which has NO GISAXS data,</span>
+<span class="sd">                  usually masked by gap or beam stop.</span>
+<span class="sd">        alpha_incident: 1D numpy.array</span>
+<span class="sd">                  incident angle for corresponded GISAXS</span>
+<span class="sd">        GISAXS_im: 3D numpy.array</span>
+<span class="sd">                  stack of GISAXS pattern. each GISAXS is a 2D numpy.array, multiple</span>
+<span class="sd">                  GISAXS patterns with different incident angle pack together.</span>
+<span class="sd">        x0      : 1D numpy.array</span>
+<span class="sd">                  linear spaced 1D array with customer defined length, minimum is 0,</span>
+<span class="sd">                  maximum should be less than maximum two theta of detector space.</span>
+<span class="sd">        fitting_range_model: 2D numpy.array</span>
+<span class="sd">                  reinterpolated multiple incident angle related Q (1D array) to</span>
+<span class="sd">                  same size for requirements of opitimization of function.</span>
+<span class="sd">        qz      : 1D numpy.array</span>
+<span class="sd">                  q of detectorspace</span>
+<span class="sd">        qz_r    : 1D numpy.array</span>
+<span class="sd">                  refraction corrected q for reflect channel</span>
+<span class="sd">        qz_d    : 1D numpy.array</span>
+<span class="sd">                  refraction corrected q for direct channel</span>
+<span class="sd">        reflc_params: 1D numpy.array</span>
+<span class="sd">                  reflectivity coefficient</span>
+<span class="sd">        trans_index: 1D numpy.array</span>
+<span class="sd">                  transmission coefficient</span>
+<span class="sd">        r_f     : floats</span>
+<span class="sd">                  reflectivity coefficient for refraction corrected q</span>
+<span class="sd">        t_f     : floats</span>
+<span class="sd">                  transmission coefficient for refrection corrected q</span>
+<span class="sd">        qz_min  : floats</span>
+<span class="sd">                  minimum refrection corrected q</span>
+<span class="sd">        qz_max  : floats</span>
+<span class="sd">                  maximum refraction corrected q</span>
+<span class="sd">        range_index_min: int</span>
+<span class="sd">                  index of qz_min</span>
+<span class="sd">        range_index_max: int</span>
+<span class="sd">                  index of qz_max</span>
+<span class="sd">        initial : 2D numpy.array</span>
+<span class="sd">                  initial guess other than default neighbor pattern</span>
+<span class="sd">        iterations: int</span>
+<span class="sd">                  maximum function evaluation iterations</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        ---------</span>
+<span class="sd">        ret.x   : 1D numpy.array</span>
+<span class="sd">                  SAXS pattern unwarped from GISAXS data at certain qx</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">fitting_portion_model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">x0</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="n">alpha_incident</span><span class="p">)))</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">qx_dimension</span>
+        <span class="k">if</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">skip_qx</span><span class="p">:</span><span class="c1">#,np.arange(550,580)]):</span>
+            <span class="k">pass</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">x0</span><span class="p">),))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">alpha_incident</span><span class="p">)):</span>
+                <span class="n">I1</span> <span class="o">=</span> <span class="p">(</span><span class="n">GISAXS_im</span><span class="p">[:,:,</span><span class="n">i</span><span class="p">])[:,</span><span class="n">j</span><span class="p">]</span>
+                <span class="n">I1</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">I1</span><span class="p">)</span><span class="o">==</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="n">I1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">I1</span><span class="p">)</span>
+                <span class="n">I1</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">I1</span><span class="p">))</span><span class="o">==</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">I1</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">I1</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">x0</span><span class="p">)))</span>
+                <span class="n">I1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">I1</span><span class="p">),</span><span class="mi">1</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">I1</span><span class="p">),</span><span class="mi">1</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">I1</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">],</span><span class="n">I1</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">I1</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">])</span>
+                <span class="c1">#figure(1),plot(qz,log(I1),qz_r,log(I1),qz_d,log(I1))</span>
+                <span class="n">fitting_range</span> <span class="o">=</span> <span class="n">qz</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">range_index_min</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span><span class="nb">int</span><span class="p">(</span><span class="n">range_index_max</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span>
+                <span class="n">fitting_portion</span> <span class="o">=</span> <span class="n">I1</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">range_index_min</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span><span class="nb">int</span><span class="p">(</span><span class="n">range_index_max</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span>
+                <span class="n">fitting_portion_model</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">fitting_range_model</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span>\
+                                  <span class="n">fitting_range</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">fitting_portion</span><span class="p">))</span><span class="o">==</span><span class="mi">0</span><span class="p">],</span>\
+                                  <span class="n">fitting_portion</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">fitting_portion</span><span class="p">))</span><span class="o">==</span><span class="mi">0</span><span class="p">])</span>
+            <span class="c1">#sys.exit()</span>
+            <span class="c1">#model = fitting_portion_model</span>
+            <span class="c1">#qz = fitting_range_model</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">y0</span> <span class="o">=</span> <span class="n">initial</span><span class="p">[:,</span><span class="n">j</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">y0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">fitting_portion_model</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span><span class="c1">#np.interp(np.linspace(np.min(qz[:,1]),np.max(qz[:,1]),x0_length),qz[:,1],log(model)[:,1])</span>
+                <span class="c1">#sys.exit()</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">y0</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y0</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">])</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">y0</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y0</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">x0</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y0</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">],</span><span class="n">x0</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y0</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">],</span><span class="n">y0</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y0</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span><span class="n">I1</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">fitting_portion_model</span><span class="p">),</span><span class="n">qz1</span><span class="o">=</span><span class="n">fitting_range_model</span><span class="p">,</span><span class="n">alpha_incident</span><span class="o">=</span><span class="n">alpha_incident</span><span class="p">,</span>
+                    <span class="n">qz_d</span><span class="o">=</span><span class="n">qz_d</span><span class="p">,</span><span class="n">qz_r</span><span class="o">=</span><span class="n">qz_r</span><span class="p">,</span><span class="n">t_f</span><span class="o">=</span><span class="n">t_f</span><span class="p">,</span><span class="n">r_f</span><span class="o">=</span><span class="n">r_f</span><span class="p">,</span><span class="n">reflc_params</span><span class="o">=</span><span class="n">reflc_params</span><span class="p">,</span><span class="n">trans_params</span><span class="o">=</span><span class="n">trans_params</span><span class="p">):</span>
+                <span class="n">norm_judge</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">alpha_incident</span><span class="p">),))</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">alpha_incident</span><span class="p">)):</span>
+                    <span class="n">I</span> <span class="o">=</span> <span class="n">I1</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">qz</span> <span class="o">=</span> <span class="n">qz1</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">I</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">I</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">])</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">I</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">I</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">qz</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">I</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">],</span><span class="n">qz</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">I</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">],</span><span class="n">I</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">I</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">qz_max</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">qz_d</span><span class="p">[:,</span><span class="n">i</span><span class="p">])</span>
+                    <span class="n">qz_min</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">qz_r</span><span class="p">[:,</span><span class="n">i</span><span class="p">])</span>
+                    <span class="n">I_direct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">qz</span><span class="p">,</span>
+					                     <span class="n">qz_d</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">qz_d</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">qz_min</span><span class="p">)):</span><span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">qz_d</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">qz_max</span><span class="p">)),</span><span class="n">i</span><span class="p">],</span>
+					                     <span class="n">y</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">qz_d</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">qz_min</span><span class="p">)):</span><span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">qz_d</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">qz_max</span><span class="p">))])</span>
+                    <span class="n">I_reflect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">qz</span><span class="p">,</span>
+                                          <span class="n">qz_r</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">qz_r</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">qz_min</span><span class="p">)):</span><span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">qz_r</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">qz_max</span><span class="p">)),</span><span class="n">i</span><span class="p">],</span>
+                                          <span class="n">y</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">qz_r</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">qz_min</span><span class="p">)):</span><span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">qz_r</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">qz_max</span><span class="p">))])</span>
+                    <span class="c1">#print I_reflect.shape,qz.shape,qz_r.shape,y.shape,</span>
+                    <span class="c1">#return I_reflect,I_direct,qz_max,qz_min</span>
+                    <span class="n">fitting_portion</span> <span class="o">=</span><span class="n">I</span><span class="c1">#I[np.nanargmin(np.abs(qz-qz_min)):np.nanargmin(np.abs(qz-qz_max))]</span>
+                    <span class="n">norm_judge</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">fitting_portion</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">trans_params</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">t_f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">I_direct</span><span class="p">)</span><span class="o">+</span>
+                                           <span class="n">t_f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">reflc_params</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">I_reflect</span><span class="p">)</span><span class="o">+</span><span class="n">trans_params</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">r_f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span>\
+                                           <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">I_reflect</span><span class="p">)</span><span class="o">+</span><span class="n">r_f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">reflc_params</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">I_direct</span><span class="p">)))</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">norm_judge</span><span class="p">)</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;L-BFGS-B&quot;</span><span class="p">,</span><span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;maxfun&#39;</span><span class="p">:</span><span class="n">iterations</span><span class="p">})</span><span class="c1">#,&#39;maxiter&#39;:5,&#39;maxls&#39;:5})</span>
+            <span class="c1">#else:</span>
+            <span class="c1">#if (j%100)==0:</span>
+            <span class="c1">#print time.time()-t</span>
+        <span class="k">return</span> <span class="n">ret</span><span class="o">.</span><span class="n">x</span></div>
+
+<span class="c1">#skip_qx = np.empty((0,0))</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+<div class="viewcode-block" id="parallel_SAXS_para_recons"><a class="viewcode-back" href="../../usage.html#unwarp_gisaxs.parallel_SAXS.parallel_SAXS_para_recons">[docs]</a><span class="k">def</span> <span class="nf">parallel_SAXS_para_recons</span><span class="p">(</span><span class="n">qx_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">skip_qx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)),</span>\
+        <span class="n">alpha_incident</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
+        <span class="n">GISAXS_im</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">x0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">fitting_range_model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
+        <span class="n">qz</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">qz_r</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">qz_d</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">qz_f</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
+        <span class="n">reflc_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">trans_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">r_f</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">t_f</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
+        <span class="n">qz_min</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">qz_max</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">range_index_min</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
+        <span class="n">range_index_max</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">initial</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)),</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">3000</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unwarp GISAXS pattern to SAXS pattern</span>
+<span class="sd">    See paper: Liu, Jiliang and Kevin Yager. &quot; Unwarp GISAXS data&quot;, IUCrJ (2018)</span>
+
+<span class="sd">    This function will automatically identify available CPU core and parallel</span>
+<span class="sd">    reconstructin process</span>
+
+<span class="sd">    &quot;alpha_incident_eff,qz_r,qz_d,qz_f,reflc_params,trans_params,r_f,t_f,\</span>
+<span class="sd">    fitting_range_model,qz_min,qz_max,range_index_min,range_index_max&quot;</span>
+<span class="sd">    will be precalculated by module coefficient_calculation.</span>
+<span class="sd">    example.py shows how to run coefficient_calculation and this function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    qx_array: 1D numpy.array</span>
+<span class="sd">              this is range(len(qx)) correlates to dimension of qx for GISAXS.</span>
+<span class="sd">              function parallel unwarp GISAXS for each qx independently.</span>
+<span class="sd">    skip_qx : 1D numpy.array</span>
+<span class="sd">              this array contains index of qx, which has NO GISAXS data,</span>
+<span class="sd">              usually masked by gap or beam stop.</span>
+<span class="sd">    alpha_incident: 1D numpy.array</span>
+<span class="sd">              incident angle for corresponded GISAXS</span>
+<span class="sd">    GISAXS_im: 3D numpy.array</span>
+<span class="sd">              stack of GISAXS pattern. each GISAXS is a 2D numpy.array, multiple</span>
+<span class="sd">              GISAXS patterns with different incident angle pack together.</span>
+<span class="sd">    x0      : 1D numpy.array</span>
+<span class="sd">              linear spaced 1D array with customer defined length, minimum is 0,</span>
+<span class="sd">              maximum should be less than maximum two theta of detector space.</span>
+<span class="sd">    fitting_range_model: 2D numpy.array</span>
+<span class="sd">              reinterpolated multiple incident angle related Q (1D array) to</span>
+<span class="sd">              same size for requirements of opitimization of function.</span>
+<span class="sd">    qz      : 1D numpy.array</span>
+<span class="sd">              q of detectorspace</span>
+<span class="sd">    qz_r    : 1D numpy.array</span>
+<span class="sd">              refraction corrected q for reflect channel</span>
+<span class="sd">    qz_d    : 1D numpy.array</span>
+<span class="sd">              refraction corrected q for direct channel</span>
+<span class="sd">    reflc_params: 1D numpy.array</span>
+<span class="sd">              reflectivity coefficient</span>
+<span class="sd">    trans_index: 1D numpy.array</span>
+<span class="sd">              transmission coefficient</span>
+<span class="sd">    r_f     : floats</span>
+<span class="sd">              reflectivity coefficient for refraction corrected q</span>
+<span class="sd">    t_f     : floats</span>
+<span class="sd">              transmission coefficient for refrection corrected q</span>
+<span class="sd">    qz_min  : floats</span>
+<span class="sd">              minimum refrection corrected q</span>
+<span class="sd">    qz_max  : floats</span>
+<span class="sd">              maximum refraction corrected q</span>
+<span class="sd">    range_index_min: int</span>
+<span class="sd">              index of qz_min</span>
+<span class="sd">    range_index_max: int</span>
+<span class="sd">              index of qz_max</span>
+<span class="sd">    initial : 2D numpy.array</span>
+<span class="sd">              initial guess other than default neighbor pattern</span>
+<span class="sd">    iterations: int</span>
+<span class="sd">              maximum function evaluation iterations</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ---------</span>
+<span class="sd">    im      : 2D numpy.array</span>
+<span class="sd">              SAXS pattern unwarped from GISAXS data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">para_func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">SAXS_para_recons</span><span class="p">,</span><span class="n">skip_qx</span><span class="o">=</span><span class="n">skip_qx</span><span class="p">,</span>\
+            <span class="n">alpha_incident</span><span class="o">=</span><span class="n">alpha_incident</span><span class="p">,</span><span class="n">GISAXS_im</span><span class="o">=</span><span class="n">GISAXS_im</span><span class="p">,</span>\
+            <span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span><span class="n">fitting_range_model</span><span class="o">=</span><span class="n">fitting_range_model</span><span class="p">,</span><span class="n">qz_r</span><span class="o">=</span><span class="n">qz_r</span><span class="p">,</span>\
+            <span class="n">qz</span><span class="o">=</span><span class="n">qz</span><span class="p">,</span><span class="n">qz_d</span><span class="o">=</span><span class="n">qz_d</span><span class="p">,</span><span class="n">qz_f</span><span class="o">=</span><span class="n">qz_f</span><span class="p">,</span><span class="n">reflc_params</span><span class="o">=</span><span class="n">reflc_params</span><span class="p">,</span>\
+            <span class="n">trans_params</span><span class="o">=</span><span class="n">trans_params</span><span class="p">,</span><span class="n">r_f</span><span class="o">=</span><span class="n">r_f</span><span class="p">,</span><span class="n">t_f</span><span class="o">=</span><span class="n">t_f</span><span class="p">,</span><span class="n">qz_min</span><span class="o">=</span><span class="n">qz_min</span><span class="p">,</span>\
+            <span class="n">qz_max</span><span class="o">=</span><span class="n">qz_max</span><span class="p">,</span><span class="n">range_index_min</span><span class="o">=</span><span class="n">range_index_min</span><span class="p">,</span>\
+            <span class="n">range_index_max</span><span class="o">=</span><span class="n">range_index_max</span><span class="p">,</span><span class="n">initial</span> <span class="o">=</span> <span class="n">initial</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="n">iterations</span><span class="p">)</span>
+
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">()</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">para_func</span><span class="p">,</span><span class="n">qx_array</span><span class="p">)</span>
+    <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">x0</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="n">qx_array</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)):</span>
+        <span class="n">im</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">im</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, jiliang liu.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.post19+g975bc45',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../_static/copybutton.js"></script>
+      <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+      <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
