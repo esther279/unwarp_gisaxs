@@ -96,9 +96,11 @@ Examples
    		qz=qz,qz_d=qz_d,qz_f=qz_f,reflc_params=reflc_params,\
    		trans_params=trans_params,r_f=r_f,t_f=t_f,qz_min=qz_min,\
    		qz_max=qz_max,range_index_min=range_index_min,\
-   		range_index_max=range_index_max,initial = w_initial, iterations=100)
+   		range_index_max=range_index_max,initial = w_initial, iterations=1500)
+
 
    print(time.time()-t)
+
 
 
 Plots
@@ -183,7 +185,7 @@ Plots
    		qz=qz,qz_d=qz_d,qz_f=qz_f,reflc_params=reflc_params,\
    		trans_params=trans_params,r_f=r_f,t_f=t_f,qz_min=qz_min,\
    		qz_max=qz_max,range_index_min=range_index_min,\
-   		range_index_max=range_index_max,initial = w_initial, iterations=100)
+   		range_index_max=range_index_max,initial = w_initial, iterations=1500)
 
    print(time.time()-t)
    fig,ax = plt.subplots()
